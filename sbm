@@ -37,13 +37,13 @@ function usage ()
   ( echo 'sbm - SlackBuild Manager for The Slackware Linux CN Community'
     echo
     echo 'Usage:'
-    echo '  ./sbm [add|del|sync|undo|init|help] [<repo>|<url>]...'
+    echo '  ./sbm [add|del|sync|init|undo|help] [<repo>|<url>]...'
     echo
     echo '  add:      Add an git repository of SlackBuild as sub module'
     echo '  del:      Delete an sub module'
     echo '  sync:     Update sub modules'
     echo '  undo:     Undo any changes'
-    echo '  init:     Init repository, should only do this at very begining'
+    echo '  init:     Init repository, only do this at very begining'
     echo '  help:     Show this message'
     echo
     echo '  <repo>:   Repository name which will cat with environment $BASEURL'
@@ -103,6 +103,24 @@ function existMod ()
 }
 
 # ==============================================================================
+# Init this repository
+# ==============================================================================
+function init ()
+{
+  cd $RDIR
+
+  echo -n "II: Try to sync this repository  ... "
+  if ( git pull -q origin master \
+        && git submodule -q update --init --recursive )
+  then
+    echo 'ok'
+  else
+    echo 'failed'
+    echo "EE: Failed to sync this repository." >&2
+  fi
+}
+
+# ==============================================================================
 # Add sub modules
 # ==============================================================================
 function add
@@ -111,6 +129,8 @@ function add
   url=''
   mod=''
   dir=''
+
+  cd $RDIR
 
   for arg in ${ARGS[@]}
   do
@@ -163,6 +183,8 @@ function del ()
 {
   MODS=( $@ )
 
+  cd $RDIR
+
   for mod in ${MODS[@]}
   do
     # TODO May cause error here in some case {
@@ -204,20 +226,14 @@ function sync ()
   mods=( $@ )
   dir=''
 
+  cd $RDIR
+
   if [[ 0 -eq ${#mods[@]} ]]
   then
     mods=( $(git submodule -q foreach 'basename $(pwd)') )
   fi
 
-  echo -n "II: Try to sync this repository  ... "
-  if ( git pull -q origin master \
-        && git submodule -q update --init --recursive )
-  then
-    echo 'ok'
-  else
-    echo 'failed'
-    echo "EE: Failed to sync this repository." >&2
-  fi
+  init
 
   for mod in ${mods[@]}
   do
@@ -257,6 +273,7 @@ function sync ()
   doAdd=0
   doDel=0
   doSync=0
+  doInit=0
 
   if [[ 0 -eq $# ]]
   then
@@ -278,13 +295,12 @@ function sync ()
     sync|update)
       doSync=1
       ;;
+    init)
+      doInit=1
+      ;;
     undo)
       git reset -q --hard HEAD
       git clean -q -dxf
-      exit 0
-      ;;
-    init)
-      git submodule update --init --recursive
       exit 0
       ;;
     *)
@@ -309,6 +325,9 @@ function sync ()
   elif [[ 1 -eq $doSync ]]
   then
     sync $@
+  elif [[ 1 -eq $doInit ]]
+  then
+    init
   fi
 
   # Write log
