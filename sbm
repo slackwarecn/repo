@@ -281,14 +281,11 @@ function sync ()
     undo)
       git reset -q --hard HEAD
       git clean -q -dxf
-      if [[ -w $LOGFILE ]]
-      then
-        sed -i '$d' $LOGFILE
-      fi
       exit 0
       ;;
     init)
       git submodule update --init --recursive
+      exit 0
       ;;
     *)
       usage
