@@ -1,0 +1,324 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# SlackBuild Manager for The Slackware Linux CN Community
+# ==============================================================================
+# Copyright (c) 2016 Arondight <shell_way@foxmail.com>,
+#                    The Slackware Linux CN Community
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# ==============================================================================
+# This to add, delete or update SlackBuilds
+# ==============================================================================
+set -e
+
+BASEURL=${BASEURL:-'https://github.com/slackwarecn-slackbuilds'}
+RDIR=$(dirname $(readlink -f $0))
+LOGFILE="${RDIR}/Changes"
+# XXX This regex can be improved {
+URLREG='^https?://(([\w\d\.-]+\.\w{2,6})|(\d{1,3}(\.\d{1,3}){3}))(:\d{1,4})*(/[\w\d\./-]*)?$'
+# }
+
+# ==============================================================================
+# Show usage of sbm
+# ==============================================================================
+function usage ()
+{
+  ( echo 'sbm - SlackBuild Manager for The Slackware Linux CN Community'
+    echo
+    echo 'Usage:'
+    echo '  ./sbm [add|del|sync|undo|init|help] [<repo>|<url>]...'
+    echo
+    echo '  add:      Add an git repository of SlackBuild as sub module'
+    echo '  del:      Delete an sub module'
+    echo '  sync:     Update sub modules'
+    echo '  undo:     Undo any changes'
+    echo '  init:     Init repository, should only do this at very begining'
+    echo '  help:     Show this message'
+    echo
+    echo '  <repo>:   Repository name which will cat with environment $BASEURL'
+    echo '  <url>:    Full repository url'
+    echo
+    echo '  $BASEURL: Default is https://github.com/slackwarecn-slackbuilds'
+    echo '            you can specfied this with custom base url'
+  ) >&2
+}
+
+# ==============================================================================
+# Check if this is an url
+# ==============================================================================
+function isUrl ()
+{
+  if ( echo $1 | grep -oP $URLREG 2>&1 >/dev/null )
+  then
+    return 0
+  fi
+
+  return 1
+}
+
+# ==============================================================================
+# Check if url is reachable
+# ==============================================================================
+function reachableUrl ()
+{
+  if ( wget -O /dev/null -o /dev/null -q $1 )
+  then
+    return 0
+  fi
+
+  return 1
+}
+
+# ==============================================================================
+# Check if sub module is exist
+# ==============================================================================
+function existMod ()
+{
+  local cwd=$(pwd)
+  local ret=0
+
+  cd $RDIR
+
+  if [[ -n $1 ]] && ( git submodule status | grep $1 2>&1 >/dev/null )
+  then
+    ret=0
+  else
+    ret=1
+  fi
+
+  cd $cwd
+
+  return $ret
+}
+
+# ==============================================================================
+# Add sub modules
+# ==============================================================================
+function add
+{
+  ARGS=( $@ )
+  url=''
+  mod=''
+  dir=''
+
+  for arg in ${ARGS[@]}
+  do
+    # Get url of repository
+    url=$arg
+    if ! ( isUrl $arg )
+    then
+      url="${BASEURL}/${arg}"
+    fi
+
+    echo -n "II: Try to add \"${url}\" ... "
+
+    # Skip if url is not reachable
+    if ! ( reachableUrl $url )
+    then
+      echo 'skip'
+      echo "EE: Can not get \"${BASEURL}\", skip." >&2
+      continue
+    fi
+
+    mod=$(basename $url)
+    dir="${RDIR}/${mod}"
+
+    # Add url as git sub module
+    if ( existMod $mod)
+    then
+      echo 'skip'
+      echo 'WW: Sub module already exist, skip.' >&2
+      continue
+    fi
+
+    cd $RDIR
+
+    if ( git submodule -q add $url $mod \
+          && cd $dir \
+          && git checkout -q $(git show --pretty='format:%H' --no-patch HEAD) )
+    then
+      echo 'ok'
+    else
+      echo 'failed'
+      echo "EE: Failed to add sub module \"${mod}\"." >&2
+    fi
+  done
+}
+
+# ==============================================================================
+# Delete sub modules
+# ==============================================================================
+function del ()
+{
+  MODS=( $@ )
+
+  for mod in ${MODS[@]}
+  do
+    # TODO May cause error here in some case {
+    if ( isUrl $mod )
+    then
+      mod=$(basename $mod)
+    fi
+    # }
+
+    echo -n "II: Try to delete \"${mod}\" ... "
+
+    if ! ( existMod $mod )
+    then
+      echo 'skip'
+      echo "WW: Sub module \"${mod}\" not exist, skip." >&2
+      continue
+    fi
+
+    if ( git submodule -q deinit -f $mod \
+          && git config -f .gitmodules --remove-section "submodule.${mod}" \
+          && git add .gitmodules \
+          && git rm -q --cached $mod \
+          && rm -rf $mod \
+          && rm -rf .git/modules/${mod} )
+    then
+      echo 'ok'
+    else
+      echo 'failed'
+      echo "EE: Failed to delete \"${mod}\"." >&2
+    fi
+  done
+}
+
+# ==============================================================================
+# Add sub modules
+# ==============================================================================
+function sync ()
+{
+  mods=( $@ )
+  dir=''
+
+  if [[ 0 -eq ${#mods[@]} ]]
+  then
+    mods=( $(git submodule -q foreach 'basename $(pwd)') )
+  fi
+
+  echo -n "II: Try to sync this repository  ... "
+  if ( git pull -q origin master \
+        && git submodule -q update --init --recursive )
+  then
+    echo 'ok'
+  else
+    echo 'failed'
+    echo "EE: Failed to sync this repository." >&2
+  fi
+
+  for mod in ${mods[@]}
+  do
+    dir="${RDIR}/${mod}"
+
+    echo -n "II: Try to sync \"${mod}\" ... "
+
+    cd $dir
+
+    if [[ ! -d $dir ]]
+    then
+      echo 'skip'
+      echo "WW: Sub module's directory \"${dir}\" not exist, skip." >&2
+      continue
+    fi
+
+    if ( git clean -q -dxf \
+          && git checkout -q master \
+          && git pull -q origin master \
+          && git checkout -q $(git show --pretty='format:%H' --no-patch HEAD) )
+    then
+      echo 'ok'
+    else
+      echo 'failed'
+      echo "EE: Failed to sync \"${mode}\"." >&2
+    fi
+  done
+}
+
+# ==============================================================================
+# MAIN
+# ==============================================================================
+# function main ()
+{
+  action=''
+  gstat=''
+  doAdd=0
+  doDel=0
+  doSync=0
+
+  if [[ 0 -eq $# ]]
+  then
+    action='help'
+  else
+    action=$1
+    shift
+  fi
+
+  cd $RDIR
+
+  case $action in
+    add)
+      doAdd=1
+      ;;
+    del|delete)
+      doDel=1
+      ;;
+    sync|update)
+      doSync=1
+      ;;
+    undo)
+      git reset -q --hard HEAD
+      git clean -q -dxf
+      if [[ -w $LOGFILE ]]
+      then
+        sed -i '$d' $LOGFILE
+      fi
+      exit 0
+      ;;
+    init)
+      git submodule update --init --recursive
+      ;;
+    *)
+      usage
+      exit 1
+      ;;
+  esac
+
+  gstat=$(git status --porcelain --ignore-submodules=dirty 2>/dev/null | tail -n 1)
+  if [[ -n $gstat ]]
+  then
+    echo "WW: Repo is dirty, quit." >&2
+    exit 1
+  fi
+
+  if [[ 1 -eq $doAdd ]]
+  then
+    add $@
+  elif [[ 1 -eq $doDel ]]
+  then
+    del $@
+  elif [[ 1 -eq $doSync ]]
+  then
+    sync $@
+  fi
+
+  # Write log
+  # XXX Need verbose log here {
+  echo "$(date +'%Y-%m-%d %T') ${action} ${@}" >>$LOGFILE
+  # }
+
+  exit 0
+}
+
