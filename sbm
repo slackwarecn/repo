@@ -73,7 +73,7 @@ function isUrl ()
 # ==============================================================================
 function reachableUrl ()
 {
-  if ( wget -O /dev/null -o /dev/null -q $1 )
+  if ( wget --spider -q $1 )
   then
     return 0
   fi
