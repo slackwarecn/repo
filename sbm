@@ -241,6 +241,8 @@ function sync ()
 {
   local mods=( $@ )
   local dir=''
+  local pcid=''
+  local ccid=''
   local ret=0
 
   cd $RDIR
@@ -267,13 +269,20 @@ function sync ()
       continue
     fi
 
+    pcid=$(git show --pretty='format:%H' --no-patch HEAD)
     if ( git clean -q -dxf \
           && git checkout -q master \
           && git pull -q origin master \
           && git checkout -q $(git show --pretty='format:%H' --no-patch HEAD) )
     then
-      echo 'ok'
-      okjobs=( ${okjobs[@]} $mod )
+      ccid=$(git show --pretty='format:%H' --no-patch HEAD)
+      if [[ $pcid == $ccid ]]
+      then
+        echo 'unchange'
+      else
+        echo 'ok'
+        okjobs=( ${okjobs[@]} $mod )
+      fi
     else
       echo 'failed'
       echo "EE: Failed to sync \"${mode}\"." >&2
