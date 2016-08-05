@@ -319,7 +319,7 @@ function undo ()
 # ==============================================================================
 function log ()
 {
-  local legalActionReg='^(?:add)|(?:del(?:ete)?|(?:sync)|(?:update))'
+  local legalActionReg='^(add)|(del(ete)?)|(sync)|(update)$'
   # XXX Is this format suitable ?
   local curtime=$(date +'%Y-%m-%d %T %Z')
   local action=$1
