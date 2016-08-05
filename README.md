@@ -30,7 +30,7 @@ cd repo
 ```bash
 git config user.signingkey <key ID>
 gpg --fingerprint <key ID> | perl -nE '$.-2 or s/^\h+// and print' | tee -a fingerprint
-uniq -d fingerprint | sort -o fingerprint
+uniq -d fingerprint | tr -s "\n" | sort -o fingerprint
 ```
 
 > 关于在GIT 中使用GPG 签名更多信息可以参考[这里](http://arondight.me/2016/04/17/%E4%BD%BF%E7%94%A8GPG%E7%AD%BE%E5%90%8DGit%E6%8F%90%E4%BA%A4%E5%92%8C%E6%A0%87%E7%AD%BE/)。

@@ -107,6 +107,8 @@ function existMod ()
 # ==============================================================================
 function init ()
 {
+  local ret=0
+
   cd $RDIR
 
   echo -n "II: Try to sync this repository  ... "
@@ -117,7 +119,10 @@ function init ()
   else
     echo 'failed'
     echo "EE: Failed to sync this repository." >&2
+    ret=1
   fi
+
+  return $ret
 }
 
 # ==============================================================================
@@ -125,10 +130,11 @@ function init ()
 # ==============================================================================
 function add
 {
-  ARGS=( $@ )
-  url=''
-  mod=''
-  dir=''
+  local ARGS=( $@ )
+  local url=''
+  local mod=''
+  local dir=''
+  local ret=0
 
   cd $RDIR
 
@@ -172,8 +178,11 @@ function add
     else
       echo 'failed'
       echo "EE: Failed to add sub module \"${mod}\"." >&2
+      ret=1
     fi
   done
+
+  return $ret
 }
 
 # ==============================================================================
@@ -181,7 +190,8 @@ function add
 # ==============================================================================
 function del ()
 {
-  MODS=( $@ )
+  local MODS=( $@ )
+  local ret=0
 
   cd $RDIR
 
@@ -214,8 +224,11 @@ function del ()
     else
       echo 'failed'
       echo "EE: Failed to delete \"${mod}\"." >&2
+      ret=1
     fi
   done
+
+  return $ret
 }
 
 # ==============================================================================
@@ -223,8 +236,9 @@ function del ()
 # ==============================================================================
 function sync ()
 {
-  mods=( $@ )
-  dir=''
+  local mods=( $@ )
+  local dir=''
+  local ret=0
 
   cd $RDIR
 
@@ -259,8 +273,41 @@ function sync ()
     else
       echo 'failed'
       echo "EE: Failed to sync \"${mode}\"." >&2
+      ret=1
     fi
   done
+
+  return $ret
+}
+
+# ==============================================================================
+# Undo changes
+# ==============================================================================
+function undo ()
+{
+  local ret=0
+
+  cd $RDIR
+
+  echo -n "II: Try to undo changes ... "
+  # FIXME Here need to clean direcotry of unregister sub modules
+  #       git-clean won't do this, I need to hack this.
+  if ( git reset -q --hard HEAD \
+        && git clean -q -dxf )
+  then
+    echo 'ok'
+  else
+    echo 'failed'
+    ( echo 'EE: Failed to undo changes ... '
+      echo 'EE: You may need to run:'
+      echo 'EE:   rm -rf *'
+      echo 'EE:   git checkout .'
+      echo 'EE:   ./sbm init'
+    ) >&2
+    ret=1
+  fi
+
+  return $ret
 }
 
 # ==============================================================================
@@ -268,12 +315,13 @@ function sync ()
 # ==============================================================================
 # function main ()
 {
-  action=''
-  gstat=''
   doAdd=0
   doDel=0
   doSync=0
   doInit=0
+  action=''
+  gstat=''
+  ret=0
 
   if [[ 0 -eq $# ]]
   then
@@ -299,9 +347,8 @@ function sync ()
       doInit=1
       ;;
     undo)
-      git reset -q --hard HEAD
-      git clean -q -dxf
-      exit 0
+      undo
+      exit $?
       ;;
     *)
       usage
@@ -319,15 +366,19 @@ function sync ()
   if [[ 1 -eq $doAdd ]]
   then
     add $@
+    ret=$?
   elif [[ 1 -eq $doDel ]]
   then
     del $@
+    ret=$?
   elif [[ 1 -eq $doSync ]]
   then
     sync $@
+    ret=$?
   elif [[ 1 -eq $doInit ]]
   then
     init
+    ret=$?
   fi
 
   # Write log
@@ -335,6 +386,6 @@ function sync ()
   echo "$(date +'%Y-%m-%d %T') ${action} ${@}" >>$LOGFILE
   # }
 
-  exit 0
+  exit $ret
 }
 
