@@ -21,7 +21,17 @@ cd repo
 ./sbm init
 ```
 
-至此你已经获得了所有的SlackBuilds，如果你只是想单纯使用SlackBuild，请忽略下一节。
+至此你已经获得了所有的SlackBuilds。
+
+### 构建SlackBuilds
+
+例子如下。
+
+```bash
+./sbm build dbus-python3 extra-cmake-modules
+```
+
+如果你只是想单纯使用SlackBuild，请忽略下一节。
 
 ## 管理
 

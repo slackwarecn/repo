@@ -38,13 +38,14 @@ function usage ()
   ( echo 'sbm - SlackBuild Manager for The Slackware Linux CN Community'
     echo
     echo 'Usage:'
-    echo '  ./sbm [add|del|sync|init|undo|help] [<repo>|<url>]...'
+    echo '  ./sbm [add|del|sync|init|undo|build|help] [<repo>|<url>]...'
     echo
     echo '  add:      Add an git repository of SlackBuild as sub module'
     echo '  del:      Delete an sub module'
     echo '  sync:     Update sub modules'
     echo '  undo:     Undo any changes'
     echo '  init:     Init repository, only do this at very begining'
+    echo '  build:    Build SlackBuilds'
     echo '  help:     Show this message'
     echo
     echo '  <repo>:   Repository name which will cat with environment $BASEURL'
@@ -324,6 +325,103 @@ function undo ()
 }
 
 # ==============================================================================
+# Build SlackBuilds
+# ==============================================================================
+function build ()
+{
+  local builds=( $@ )
+  local arch=''
+  local dir=''
+  local slackbuild=''
+  local info=''
+  local file=''
+  local url=( )
+  local md5=( )
+  local index=0
+
+  if [[ -z $arch ]]
+  then
+    case "$(uname -m)" in
+      i?86) arch='i486' ;;
+      arm*) arch='arm' ;;
+      *)    arch=$(uname -m) ;;
+    esac
+  fi
+
+  cd $RDIR
+
+  for build in ${builds[@]}
+  do
+    dir="${RDIR}/${build}"
+    slackbuild="${dir}/${build}.SlackBuild"
+    info="${dir}/${build}.info"
+
+    cd $dir
+
+    echo "II: Source \"${info}\" ..."
+    source $info
+
+    if [[ "" == $DOWNLOAD_x86_64 ]]
+    then
+      url=( $DOWNLOAD )
+      md5=( $MD5SUM )
+    else
+      case $arch in
+        *86)
+          url=( $DOWNLOAD )
+          md5=( $MD5SUM )
+          ;;
+        *64)
+          url=( $DOWNLOAD_x86_64 )
+          md5=( $MD5SUM_x86_64 )
+          ;;
+      esac
+    fi
+
+    if [[ ${#url[@]} != ${#md5[@]} ]]
+    then
+      echo "EE: In \"${build}\" url and source not matched, skip." >&2
+      continue
+    fi
+
+    for ((index = 0; index < ${#url[@]}; ++index))
+    do
+      echo "II:: Download ${url[$index]} ..."
+      if ( wget -N ${url[$index]} )
+      then
+        echo 'ok'
+      else
+        echo 'failed'
+        echo "EE: Failed to download ${url[$index]}, skip." >&2
+        continue
+      fi
+    done
+
+    for ((index = 0; index < ${#md5[@]}; ++index))
+    do
+      expectmd5=${md5[$index]}
+      file=$(basename ${url[$index]})
+      curmd5=$(md5sum $file | awk '{print $1}')
+
+      echo -n "Verify file \"${file}\" ... "
+      if [[ $expectmd5 != $curmd5 ]]
+      then
+        echo "failed"
+        ( echo "Error \"${file}\":"
+          echo -e "\texpect md5 \"${expectmd5}\""
+          echo -e "\tcurrent md5 \"${curmd5}\""
+        ) >&2
+      else
+        echo "ok"
+      fi
+    done
+
+    echo "II: Try to build \"${build}\" ..."
+    command $slackbuild
+  done
+}
+
+# ==============================================================================
 # Write log
 # ==============================================================================
 function log ()
@@ -393,6 +491,10 @@ function log ()
       ;;
     undo)
       undo
+      exit $?
+      ;;
+    build)
+      build $@
       exit $?
       ;;
     *)
