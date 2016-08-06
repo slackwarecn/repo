@@ -443,6 +443,7 @@ function log ()
   fi
 
   ( echo "$curtime"
+    echo
     for job in ${okjobs[@]}
     do
       echo "  - ${action} ${job}"

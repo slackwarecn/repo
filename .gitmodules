@@ -1,0 +1,45 @@
+[submodule "brise"]
+	path = brise
+	url = https://github.com/slackwarecn-slackbuilds/brise
+[submodule "cssselect-python3"]
+	path = cssselect-python3
+	url = https://github.com/slackwarecn-slackbuilds/cssselect-python3
+[submodule "bcloud"]
+	path = bcloud
+	url = https://github.com/slackwarecn-slackbuilds/bcloud
+[submodule "dbus-python3"]
+	path = dbus-python3
+	url = https://github.com/slackwarecn-slackbuilds/dbus-python3
+[submodule "extra-cmake-modules"]
+	path = extra-cmake-modules
+	url = https://github.com/slackwarecn-slackbuilds/extra-cmake-modules
+[submodule "fcitx-qt5"]
+	path = fcitx-qt5
+	url = https://github.com/slackwarecn-slackbuilds/fcitx-qt5
+[submodule "fcitx-rime"]
+	path = fcitx-rime
+	url = https://github.com/slackwarecn-slackbuilds/fcitx-rime
+[submodule "kconfig"]
+	path = kconfig
+	url = https://github.com/slackwarecn-slackbuilds/kconfig
+[submodule "libQtShadowsocks"]
+	path = libQtShadowsocks
+	url = https://github.com/slackwarecn-slackbuilds/libQtShadowsocks
+[submodule "librime"]
+	path = librime
+	url = https://github.com/slackwarecn-slackbuilds/librime
+[submodule "marisa-trie"]
+	path = marisa-trie
+	url = https://github.com/slackwarecn-slackbuilds/marisa-trie
+[submodule "pyinotify-python3"]
+	path = pyinotify-python3
+	url = https://github.com/slackwarecn-slackbuilds/pyinotify-python3
+[submodule "shadowsocks-qt5"]
+	path = shadowsocks-qt5
+	url = https://github.com/slackwarecn-slackbuilds/shadowsocks-qt5
+[submodule "sublimetext3"]
+	path = sublimetext3
+	url = https://github.com/slackwarecn-slackbuilds/sublimetext3
+[submodule "netease-cloud-music"]
+	path = netease-cloud-music
+	url = https://github.com/slackwarecn-slackbuilds/netease-cloud-music
