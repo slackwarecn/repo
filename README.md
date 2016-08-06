@@ -6,6 +6,10 @@ The Slackware Linux CN Community Repository.
 
 这里是Slackware Linux 中文社区的SlackBuilds 仓库，存放本社区所贡献的SlackBuilds。
 
+如果你想在这里加入你的[SlackBuild](http://docs.slackware.com/slackware:slackbuild_scripts)，请阅读我们的[slackbuild-guidelines](https://github.com/slackwarecn/slackbuild-guidelines)。
+
+当你提交完一个符合上述guidelines 的SlackBuild 后，请[提交Issue](https://github.com/slackwarecn/repo/issues) 并写明你的SlackBuild 所对应的项目名称。
+
 ## 使用
 
 ### 克隆该仓库
