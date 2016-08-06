@@ -142,6 +142,8 @@ function add
 
   for arg in ${ARGS[@]}
   do
+    mod=${mod%/}
+
     # Get url of repository
     url=$arg
     if ! ( isUrl $arg )
@@ -200,6 +202,8 @@ function del ()
 
   for mod in ${MODS[@]}
   do
+    mod=${mod%/}
+
     # TODO May cause error here in some case {
     if ( isUrl $mod )
     then
@@ -257,6 +261,7 @@ function sync ()
 
   for mod in ${mods[@]}
   do
+    mod=${mod%/}
     dir="${RDIR}/${mod}"
 
     echo -n "II: Try to sync \"${mod}\" ... "
@@ -449,8 +454,7 @@ function build ()
 # ==============================================================================
 function log ()
 {
-  local legalActionReg='^(add)|(del(ete)?)|(sync)|(update)$'
-  # XXX Is this format suitable ?
+  local legalActionReg='^(add)|(del(ete)?)|(sync)$'
   local curtime=$(date +'%Y-%m-%d %T %Z')
   local action=$1
   shift
@@ -463,6 +467,11 @@ function log ()
   if [[ 0 -eq ${#okjobs[@]} ]]
   then
     return 0
+  fi
+
+  if [[ 'del' == $action ]]
+  then
+    action='delete'
   fi
 
   ( echo "$curtime"
@@ -507,7 +516,7 @@ function log ()
     del|delete)
       doDel=1
       ;;
-    sync|update)
+    sync)
       doSync=1
       ;;
     init)
