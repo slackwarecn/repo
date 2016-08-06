@@ -352,16 +352,29 @@ function build ()
 
   for build in ${builds[@]}
   do
+    build=${build%/}
     dir="${RDIR}/${build}"
     slackbuild="${dir}/${build}.SlackBuild"
     info="${dir}/${build}.info"
 
+    if [[ ! -d $dir ]]
+    then
+      echo "EE: Can not found \"${build}\", skip." >&2
+      continue
+    fi
+
     cd $dir
 
-    echo "II: Source \"${info}\" ..."
+    echo -n "II: Source \"${build}.info\" ... "
+    if [[ ! -r $info ]]
+    then
+      echo 'failed'
+      echo "EE: Can not read \"${build}.info\", skip." >&2
+      continue
+    fi
     source $info
 
-    if [[ "" == $DOWNLOAD_x86_64 ]]
+    if [[ '' == $DOWNLOAD_x86_64 ]]
     then
       url=( $DOWNLOAD )
       md5=( $MD5SUM )
@@ -378,16 +391,26 @@ function build ()
       esac
     fi
 
+    if [[ 0 -eq ${#url[@]} ]]
+    then
+      echo 'failed'
+      echo "EE: Miss DOWNLOAD or DOWNLOAD_x86_64 in \"${build}.info\", skip." >&2
+      continue
+    fi
+
     if [[ ${#url[@]} != ${#md5[@]} ]]
     then
+      echo 'failed'
       echo "EE: In \"${build}\" url and source not matched, skip." >&2
       continue
     fi
 
+    echo 'ok'
+
     for ((index = 0; index < ${#url[@]}; ++index))
     do
-      echo "II:: Download ${url[$index]} ..."
-      if ( wget -N ${url[$index]} )
+      echo -n "II:: Download ${url[$index]} ..."
+      if ( wget -qN ${url[$index]} )
       then
         echo 'ok'
       else
@@ -504,6 +527,8 @@ function log ()
       ;;
   esac
 
+  cd $RDIR
+
   gstat=$(git status --porcelain --ignore-submodules=dirty 2>/dev/null | tail -n 1)
   if [[ -n $gstat ]]
   then
@@ -528,6 +553,8 @@ function log ()
     init
     ret=$?
   fi
+
+  cd $RDIR
 
   log $action $@
 
