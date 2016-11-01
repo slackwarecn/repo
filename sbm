@@ -291,7 +291,7 @@ function sync ()
       fi
     else
       echo 'failed'
-      echo "EE: Failed to sync \"${mode}\"." >&2
+      echo "EE: Failed to sync \"${mod}\"." >&2
       ret=1
     fi
   done
@@ -459,7 +459,7 @@ function log ()
   local action=$1
   shift
 
-  if [[ 0 -ge $# ]] || ! ( echo $action | grep -oP $legalActionReg 2>&1 >/dev/null )
+  if [[ 0 -gt $# ]] || ! ( echo $action | grep -oP $legalActionReg 2>&1 >/dev/null )
   then
     return 0
   fi
