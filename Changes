@@ -21,3 +21,9 @@
   - sync fcitx-qt5
   - sync sublimetext3
 
+2016-11-01 12:09:27 CST
+
+  - add https://github.com/slackwarecn-slackbuilds/fcitx-sogoupinyin
+  - add https://github.com/slackwarecn-slackbuilds/fcitx-qimpanel
+  - add https://github.com/slackwarecn-slackbuilds/shadowsocks-libev
+

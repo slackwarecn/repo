@@ -43,3 +43,12 @@
 [submodule "netease-cloud-music"]
 	path = netease-cloud-music
 	url = https://github.com/slackwarecn-slackbuilds/netease-cloud-music
+[submodule "fcitx-sogoupinyin"]
+	path = fcitx-sogoupinyin
+	url = https://github.com/slackwarecn-slackbuilds/fcitx-sogoupinyin
+[submodule "fcitx-qimpanel"]
+	path = fcitx-qimpanel
+	url = https://github.com/slackwarecn-slackbuilds/fcitx-qimpanel
+[submodule "shadowsocks-libev"]
+	path = shadowsocks-libev
+	url = https://github.com/slackwarecn-slackbuilds/shadowsocks-libev
