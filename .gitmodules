@@ -52,3 +52,6 @@
 [submodule "shadowsocks-libev"]
 	path = shadowsocks-libev
 	url = https://github.com/slackwarecn-slackbuilds/shadowsocks-libev
+[submodule "WizNote"]
+	path = WizNote
+	url = https://github.com/slackwarecn-slackbuilds/WizNote
