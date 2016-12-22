@@ -41,3 +41,8 @@
   - sync fcitx-qimpanel
   - sync netease-cloud-music
 
+2016-12-23 00:24:00 CST
+
+  - delete fcitx-qt5
+  - delete extra-cmake-modules
+
