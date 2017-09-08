@@ -46,3 +46,12 @@
   - delete fcitx-qt5
   - delete extra-cmake-modules
 
+2017-09-08 12:51:47 CST
+
+  - sync brise
+  - sync fcitx-rime
+  - sync librime
+  - sync marisa-trie
+  - sync netease-cloud-music
+  - sync shadowsocks-libev
+
