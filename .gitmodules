@@ -49,3 +49,21 @@
 [submodule "WizNote"]
 	path = WizNote
 	url = https://github.com/slackwarecn-slackbuilds/WizNote
+[submodule "Firefox-hardened-nonprism"]
+	path = Firefox-hardened-nonprism
+	url = https://github.com/slackwarecn-slackbuilds/Firefox-hardened-nonprism
+[submodule "macchiato-nonprism"]
+	path = macchiato-nonprism
+	url = https://github.com/slackwarecn-slackbuilds/macchiato-nonprism
+[submodule "icecat-hardened-nonprism"]
+	path = icecat-hardened-nonprism
+	url = https://github.com/slackwarecn-slackbuilds/icecat-hardened-nonprism
+[submodule "fcitx-SlackBuild-live"]
+	path = fcitx-SlackBuild-live
+	url = https://github.com/slackwarecn-slackbuilds/fcitx-SlackBuild-live
+[submodule "Tor-nonprism"]
+	path = Tor-nonprism
+	url = https://github.com/slackwarecn-slackbuilds/Tor-nonprism
+[submodule "NetworkManager-nonprism"]
+	path = NetworkManager-nonprism
+	url = https://github.com/slackwarecn-slackbuilds/NetworkManager-nonprism

@@ -55,3 +55,12 @@
   - sync netease-cloud-music
   - sync shadowsocks-libev
 
+2017-09-08 13:04:21 CST
+
+  - add https://github.com/slackwarecn-slackbuilds/Firefox-hardened-nonprism
+  - add https://github.com/slackwarecn-slackbuilds/macchiato-nonprism
+  - add https://github.com/slackwarecn-slackbuilds/icecat-hardened-nonprism
+  - add https://github.com/slackwarecn-slackbuilds/fcitx-SlackBuild-live
+  - add https://github.com/slackwarecn-slackbuilds/Tor-nonprism
+  - add https://github.com/slackwarecn-slackbuilds/NetworkManager-nonprism
+
