@@ -68,3 +68,11 @@
 
   - delete Firefox-hardened-nonprism
 
+2022-07-23 19:00:54 CST
+
+  - add https://github.com/slackwarecn-slackbuilds/obfs4proxy
+  - add https://github.com/slackwarecn-slackbuilds/QQ
+  - add https://github.com/slackwarecn-slackbuilds/v2ray
+  - add https://github.com/slackwarecn-slackbuilds/signal-desktop
+  - add https://github.com/slackwarecn-slackbuilds/kernel-self-build
+

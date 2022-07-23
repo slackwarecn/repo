@@ -64,3 +64,18 @@
 [submodule "NetworkManager-nonprism"]
 	path = NetworkManager-nonprism
 	url = https://github.com/slackwarecn-slackbuilds/NetworkManager-nonprism
+[submodule "obfs4proxy"]
+	path = obfs4proxy
+	url = https://github.com/slackwarecn-slackbuilds/obfs4proxy
+[submodule "QQ"]
+	path = QQ
+	url = https://github.com/slackwarecn-slackbuilds/QQ
+[submodule "v2ray"]
+	path = v2ray
+	url = https://github.com/slackwarecn-slackbuilds/v2ray
+[submodule "signal-desktop"]
+	path = signal-desktop
+	url = https://github.com/slackwarecn-slackbuilds/signal-desktop
+[submodule "kernel-self-build"]
+	path = kernel-self-build
+	url = https://github.com/slackwarecn-slackbuilds/kernel-self-build
