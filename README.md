@@ -29,8 +29,6 @@ cd repo
 
 ### 构建 SlackBuilds
 
-例子如下。
-
 ```bash
 ./sbm build dbus-python3 extra-cmake-modules
 ```
@@ -63,8 +61,6 @@ uniq -d fingerprint | tr -s "\n" | sort -o fingerprint
 
 ### 添加 SlackBuilds
 
-例子如下。
-
 ```bash
 ./sbm add netease-cloud-music shadowsocks-qt5 \
           https://github.com/slackwarecn-slackbuilds/fcitx-rime-slackbuild
@@ -76,8 +72,6 @@ git commit -S
 
 ### 删除 SlackBuilds
 
-例子如下。
-
 ```bash
 ./sbm del netease-cloud-music shadowsocks-qt5 fcitx-rime-slackbuild
 vim Changes
@@ -86,8 +80,6 @@ git commit -S
 ```
 
 ### 同步、更新 SlackBuilds
-
-例子如下。
 
 ```bash
 ./sbm sync
@@ -98,18 +90,16 @@ git commit -S
 
 ### 撤销所有更改
 
-例子如下。
-
 ```bash
 ./sbm undo
 ```
 
 ### 推送上游
 
-例子如下。
-
 ```bash
 git push origin master
 ```
 
-> 不支持 Pull Request。
+## 许可
+
+[MIT LICENSE](LICENSE) 。
