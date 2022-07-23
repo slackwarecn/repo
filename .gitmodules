@@ -49,9 +49,6 @@
 [submodule "WizNote"]
 	path = WizNote
 	url = https://github.com/slackwarecn-slackbuilds/WizNote
-[submodule "Firefox-hardened-nonprism"]
-	path = Firefox-hardened-nonprism
-	url = https://github.com/slackwarecn-slackbuilds/Firefox-hardened-nonprism
 [submodule "macchiato-nonprism"]
 	path = macchiato-nonprism
 	url = https://github.com/slackwarecn-slackbuilds/macchiato-nonprism
